@@ -1,0 +1,457 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "8b098c19-d4db-4788-9d9f-d886588b006d",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: numpy in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (1.26.4)\n",
+      "Requirement already satisfied: pandas in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (3.0.2)\n",
+      "Requirement already satisfied: scikit-learn in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (1.8.0)\n",
+      "Requirement already satisfied: tensorflow in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (2.16.2)\n",
+      "Requirement already satisfied: matplotlib in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (3.10.8)\n",
+      "Requirement already satisfied: python-dateutil>=2.8.2 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from pandas) (2.9.0.post0)\n",
+      "Requirement already satisfied: scipy>=1.10.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from scikit-learn) (1.17.1)\n",
+      "Requirement already satisfied: joblib>=1.3.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from scikit-learn) (1.5.3)\n",
+      "Requirement already satisfied: threadpoolctl>=3.2.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from scikit-learn) (3.6.0)\n",
+      "Requirement already satisfied: absl-py>=1.0.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (2.4.0)\n",
+      "Requirement already satisfied: astunparse>=1.6.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (1.6.3)\n",
+      "Requirement already satisfied: flatbuffers>=23.5.26 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (25.12.19)\n",
+      "Requirement already satisfied: gast!=0.5.0,!=0.5.1,!=0.5.2,>=0.2.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (0.7.0)\n",
+      "Requirement already satisfied: google-pasta>=0.1.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (0.2.0)\n",
+      "Requirement already satisfied: h5py>=3.10.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (3.14.0)\n",
+      "Requirement already satisfied: libclang>=13.0.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (18.1.1)\n",
+      "Requirement already satisfied: ml-dtypes~=0.3.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (0.3.2)\n",
+      "Requirement already satisfied: opt-einsum>=2.3.2 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (3.4.0)\n",
+      "Requirement already satisfied: packaging in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (26.1)\n",
+      "Requirement already satisfied: protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,<5.0.0dev,>=3.20.3 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (4.25.9)\n",
+      "Requirement already satisfied: requests<3,>=2.21.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (2.33.1)\n",
+      "Requirement already satisfied: setuptools in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (65.5.0)\n",
+      "Requirement already satisfied: six>=1.12.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (1.17.0)\n",
+      "Requirement already satisfied: termcolor>=1.1.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (3.3.0)\n",
+      "Requirement already satisfied: typing-extensions>=3.6.6 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (4.15.0)\n",
+      "Requirement already satisfied: wrapt>=1.11.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (2.1.2)\n",
+      "Requirement already satisfied: grpcio<2.0,>=1.24.3 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (1.80.0)\n",
+      "Requirement already satisfied: tensorboard<2.17,>=2.16 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (2.16.2)\n",
+      "Requirement already satisfied: keras>=3.0.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (3.14.0)\n",
+      "Requirement already satisfied: tensorflow-io-gcs-filesystem>=0.23.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorflow) (0.37.1)\n",
+      "Requirement already satisfied: charset_normalizer<4,>=2 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.4.7)\n",
+      "Requirement already satisfied: idna<4,>=2.5 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (3.11)\n",
+      "Requirement already satisfied: urllib3<3,>=1.26 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2.6.3)\n",
+      "Requirement already satisfied: certifi>=2023.5.7 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from requests<3,>=2.21.0->tensorflow) (2026.2.25)\n",
+      "Requirement already satisfied: markdown>=2.6.8 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorboard<2.17,>=2.16->tensorflow) (3.10.2)\n",
+      "Requirement already satisfied: tensorboard-data-server<0.8.0,>=0.7.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorboard<2.17,>=2.16->tensorflow) (0.7.2)\n",
+      "Requirement already satisfied: werkzeug>=1.0.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from tensorboard<2.17,>=2.16->tensorflow) (3.1.8)\n",
+      "Requirement already satisfied: contourpy>=1.0.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (1.3.3)\n",
+      "Requirement already satisfied: cycler>=0.10 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (0.12.1)\n",
+      "Requirement already satisfied: fonttools>=4.22.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (4.62.1)\n",
+      "Requirement already satisfied: kiwisolver>=1.3.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (1.5.0)\n",
+      "Requirement already satisfied: pillow>=8 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (12.2.0)\n",
+      "Requirement already satisfied: pyparsing>=3 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from matplotlib) (3.3.2)\n",
+      "Requirement already satisfied: wheel<1.0,>=0.23.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from astunparse>=1.6.0->tensorflow) (0.46.3)\n",
+      "Requirement already satisfied: rich in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from keras>=3.0.0->tensorflow) (15.0.0)\n",
+      "Requirement already satisfied: namex in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from keras>=3.0.0->tensorflow) (0.1.0)\n",
+      "Requirement already satisfied: optree in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from keras>=3.0.0->tensorflow) (0.19.0)\n",
+      "Requirement already satisfied: markupsafe>=2.1.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from werkzeug>=1.0.1->tensorboard<2.17,>=2.16->tensorflow) (3.0.3)\n",
+      "Requirement already satisfied: markdown-it-py>=2.2.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from rich->keras>=3.0.0->tensorflow) (4.0.0)\n",
+      "Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from rich->keras>=3.0.0->tensorflow) (2.20.0)\n",
+      "Requirement already satisfied: mdurl~=0.1 in /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages (from markdown-it-py>=2.2.0->rich->keras>=3.0.0->tensorflow) (0.1.2)\n",
+      "\n",
+      "\u001b[1m[\u001b[0m\u001b[34;49mnotice\u001b[0m\u001b[1;39;49m]\u001b[0m\u001b[39;49m A new release of pip is available: \u001b[0m\u001b[31;49m26.0.1\u001b[0m\u001b[39;49m -> \u001b[0m\u001b[32;49m26.1\u001b[0m\n",
+      "\u001b[1m[\u001b[0m\u001b[34;49mnotice\u001b[0m\u001b[1;39;49m]\u001b[0m\u001b[39;49m To update, run: \u001b[0m\u001b[32;49mpip install --upgrade pip\u001b[0m\n",
+      "Note: you may need to restart the kernel to use updated packages.\n"
+     ]
+    }
+   ],
+   "source": [
+    "pip install numpy pandas scikit-learn tensorflow matplotlib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "db0246a8-2d2b-41eb-b4cf-9575b008bfdb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.linear_model import LinearRegression\n",
+    "from sklearn.preprocessing import StandardScaler\n",
+    "from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score\n",
+    "\n",
+    "from tensorflow.keras.models import Sequential\n",
+    "from tensorflow.keras.layers import Dense, Input"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "7be57036-11da-4bac-b9bf-2882cb2bc666",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "      CRIM    ZN  INDUS  CHAS    NOX     RM   AGE     DIS  RAD    TAX  \\\n",
+      "0  0.00632  18.0   2.31     0  0.538  6.575  65.2  4.0900    1  296.0   \n",
+      "1  0.02731   0.0   7.07     0  0.469  6.421  78.9  4.9671    2  242.0   \n",
+      "2  0.02729   0.0   7.07     0  0.469  7.185  61.1  4.9671    2  242.0   \n",
+      "3  0.03237   0.0   2.18     0  0.458  6.998  45.8  6.0622    3  222.0   \n",
+      "4  0.06905   0.0   2.18     0  0.458  7.147  54.2  6.0622    3  222.0   \n",
+      "\n",
+      "   PTRATIO       B  LSTAT  PRICE  \n",
+      "0     15.3  396.90   4.98   24.0  \n",
+      "1     17.8  396.90   9.14   21.6  \n",
+      "2     17.8  392.83   4.03   34.7  \n",
+      "3     18.7  394.63   2.94   33.4  \n",
+      "4     18.7  396.90   5.33   36.2  \n",
+      "(506, 14)\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Load dataset (fix space-separated issue)\n",
+    "df = pd.read_csv(\"housing.csv\", sep=r\"\\s+\", header=None)\n",
+    "\n",
+    "# Assign correct column names\n",
+    "df.columns = [\"CRIM\",\"ZN\",\"INDUS\",\"CHAS\",\"NOX\",\"RM\",\"AGE\",\n",
+    "              \"DIS\",\"RAD\",\"TAX\",\"PTRATIO\",\"B\",\"LSTAT\",\"PRICE\"]\n",
+    "\n",
+    "print(df.head())\n",
+    "print(df.shape)   # should be (506, 14)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "f2614c5c-47eb-46e9-ba93-71c7e13a25fd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = df[['LSTAT', 'RM', 'PTRATIO']]\n",
+    "y = df['PRICE']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "74b689c5-bc60-425e-b9be-4121b9705305",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(\n",
+    "    X, y, test_size=0.2, random_state=42\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "0b00f45b-b384-42fe-97ef-61c2bbb05a01",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "scaler = StandardScaler()\n",
+    "\n",
+    "X_train_scaled = scaler.fit_transform(X_train)\n",
+    "X_test_scaled = scaler.transform(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "28920512-7f30-4786-ba2b-a2a88a96985b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "🔹 Linear Regression Model Evaluation:\n",
+      "MSE: 27.114957415580577\n",
+      "MAE: 3.3325380783240974\n",
+      "R2 Score: 0.6302528487272827\n"
+     ]
+    }
+   ],
+   "source": [
+    "lr_model = LinearRegression()\n",
+    "lr_model.fit(X_train_scaled, y_train)\n",
+    "\n",
+    "y_pred_lr = lr_model.predict(X_test_scaled)\n",
+    "\n",
+    "print(\"\\n🔹 Linear Regression Model Evaluation:\")\n",
+    "print(\"MSE:\", mean_squared_error(y_test, y_pred_lr))\n",
+    "print(\"MAE:\", mean_absolute_error(y_test, y_pred_lr))\n",
+    "print(\"R2 Score:\", r2_score(y_test, y_pred_lr))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "6695471e-31d1-4809-ae6b-8f4ef77b428b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "2026-05-04 23:16:24.619735: I metal_plugin/src/device/metal_device.cc:1154] Metal device set to: Apple M1\n",
+      "2026-05-04 23:16:24.620250: I metal_plugin/src/device/metal_device.cc:296] systemMemory: 8.00 GB\n",
+      "2026-05-04 23:16:24.620258: I metal_plugin/src/device/metal_device.cc:313] maxCacheSize: 2.67 GB\n",
+      "2026-05-04 23:16:24.620569: I tensorflow/core/common_runtime/pluggable_device/pluggable_device_factory.cc:305] Could not identify NUMA node of platform GPU ID 0, defaulting to 0. Your kernel may not have been built with NUMA support.\n",
+      "2026-05-04 23:16:24.620619: I tensorflow/core/common_runtime/pluggable_device/pluggable_device_factory.cc:271] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 0 MB memory) -> physical PluggableDevice (device: 0, name: METAL, pci bus id: <undefined>)\n"
+     ]
+    }
+   ],
+   "source": [
+    "model = Sequential([\n",
+    "    Input(shape=(3,)),\n",
+    "    Dense(128, activation='relu'),\n",
+    "    Dense(64, activation='relu'),\n",
+    "    Dense(32, activation='relu'),\n",
+    "    Dense(16, activation='relu'),\n",
+    "    Dense(1)\n",
+    "])\n",
+    "\n",
+    "model.compile(optimizer='adam', loss='mse', metrics=['mae'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "6f89d221-9a29-4995-88dd-6bc5444e3f11",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 1/50\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "2026-05-04 23:16:35.901372: I tensorflow/core/grappler/optimizers/custom_graph_optimizer_registry.cc:117] Plugin optimizer for device_type GPU is enabled.\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m4s\u001b[0m 147ms/step - loss: 602.7346 - mae: 22.5889 - val_loss: 583.1948 - val_mae: 22.5093\n",
+      "Epoch 2/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 586.6616 - mae: 22.1545 - val_loss: 566.1518 - val_mae: 22.0529\n",
+      "Epoch 3/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 21ms/step - loss: 570.4946 - mae: 21.7083 - val_loss: 549.6221 - val_mae: 21.6147\n",
+      "Epoch 4/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 551.1644 - mae: 21.2886 - val_loss: 524.2827 - val_mae: 21.1869\n",
+      "Epoch 5/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 508.1643 - mae: 20.8675 - val_loss: 467.9448 - val_mae: 20.6576\n",
+      "Epoch 6/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 425.2190 - mae: 19.8506 - val_loss: 486.7747 - val_mae: 19.8817\n",
+      "Epoch 7/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 437.7755 - mae: 19.0440 - val_loss: 474.3463 - val_mae: 19.2400\n",
+      "Epoch 8/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 377.9700 - mae: 18.3378 - val_loss: 375.9088 - val_mae: 18.3855\n",
+      "Epoch 9/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 344.9927 - mae: 17.6296 - val_loss: 363.3502 - val_mae: 17.1905\n",
+      "Epoch 10/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 300.7395 - mae: 16.1832 - val_loss: 348.1590 - val_mae: 15.8133\n",
+      "Epoch 11/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 261.0480 - mae: 14.5859 - val_loss: 268.4705 - val_mae: 14.1650\n",
+      "Epoch 12/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 212.3297 - mae: 13.0168 - val_loss: 298.7469 - val_mae: 13.1090\n",
+      "Epoch 13/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 264.2508 - mae: 12.7401 - val_loss: 148.7025 - val_mae: 10.5342\n",
+      "Epoch 14/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 128.2510 - mae: 9.4490 - val_loss: 114.0800 - val_mae: 8.7669\n",
+      "Epoch 15/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 141.5419 - mae: 8.8388 - val_loss: 221.4981 - val_mae: 10.8687\n",
+      "Epoch 16/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 196.0608 - mae: 10.0530 - val_loss: 334.9270 - val_mae: 13.9572\n",
+      "Epoch 17/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 100.8518 - mae: 6.8541 - val_loss: 174.5971 - val_mae: 10.2262\n",
+      "Epoch 18/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 172.0138 - mae: 8.8292 - val_loss: 62.6224 - val_mae: 5.0117\n",
+      "Epoch 19/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 236.1202 - mae: 11.2892 - val_loss: 243.1009 - val_mae: 12.5018\n",
+      "Epoch 20/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 337.2267 - mae: 12.9817 - val_loss: 2082.8530 - val_mae: 37.5438\n",
+      "Epoch 21/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 909.2303 - mae: 21.9112 - val_loss: 214.9079 - val_mae: 11.3048\n",
+      "Epoch 22/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 192.0953 - mae: 10.0677 - val_loss: 72.4861 - val_mae: 5.9898\n",
+      "Epoch 23/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 217.6834 - mae: 10.9576 - val_loss: 499.6382 - val_mae: 17.7827\n",
+      "Epoch 24/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 19ms/step - loss: 225.9413 - mae: 10.6591 - val_loss: 140.7473 - val_mae: 9.3055\n",
+      "Epoch 25/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 50.5660 - mae: 5.1588 - val_loss: 42.9461 - val_mae: 3.8802\n",
+      "Epoch 26/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 38.3340 - mae: 4.2635 - val_loss: 40.5229 - val_mae: 3.6963\n",
+      "Epoch 27/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 88.7621 - mae: 6.2393 - val_loss: 81.2844 - val_mae: 6.5024\n",
+      "Epoch 28/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 72.8001 - mae: 6.2076 - val_loss: 48.2390 - val_mae: 4.3704\n",
+      "Epoch 29/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 50.9669 - mae: 4.8745 - val_loss: 68.5904 - val_mae: 5.7211\n",
+      "Epoch 30/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 131.9344 - mae: 8.1585 - val_loss: 155.4876 - val_mae: 9.8332\n",
+      "Epoch 31/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 89.2790 - mae: 6.8451 - val_loss: 65.5924 - val_mae: 5.5332\n",
+      "Epoch 32/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 346.2825 - mae: 12.1462 - val_loss: 668.9030 - val_mae: 21.1252\n",
+      "Epoch 33/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 142.3143 - mae: 7.7140 - val_loss: 92.9025 - val_mae: 6.9741\n",
+      "Epoch 34/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 415.7708 - mae: 14.9207 - val_loss: 1031.0074 - val_mae: 26.2066\n",
+      "Epoch 35/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 1533.1932 - mae: 27.8214 - val_loss: 156.1136 - val_mae: 9.8376\n",
+      "Epoch 36/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 1363.1324 - mae: 27.4887 - val_loss: 2027.8999 - val_mae: 36.7410\n",
+      "Epoch 37/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 620.3223 - mae: 18.3761 - val_loss: 336.9042 - val_mae: 14.4310\n",
+      "Epoch 38/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 311.0670 - mae: 12.4587 - val_loss: 99.6523 - val_mae: 7.4688\n",
+      "Epoch 39/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 52.0835 - mae: 5.1345 - val_loss: 141.2570 - val_mae: 9.2250\n",
+      "Epoch 40/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 83.5924 - mae: 6.4341 - val_loss: 236.1216 - val_mae: 11.8594\n",
+      "Epoch 41/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 146.4357 - mae: 8.4824 - val_loss: 57.7201 - val_mae: 4.9116\n",
+      "Epoch 42/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 63.4431 - mae: 5.5900 - val_loss: 49.9115 - val_mae: 4.3720\n",
+      "Epoch 43/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 40.2657 - mae: 4.4322 - val_loss: 204.5540 - val_mae: 11.3391\n",
+      "Epoch 44/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 98.8939 - mae: 7.4209 - val_loss: 50.2340 - val_mae: 4.3471\n",
+      "Epoch 45/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 34.4483 - mae: 4.1927 - val_loss: 84.9740 - val_mae: 6.6577\n",
+      "Epoch 46/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 78.5889 - mae: 6.2128 - val_loss: 147.5822 - val_mae: 9.4354\n",
+      "Epoch 47/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 159.8944 - mae: 8.9842 - val_loss: 137.5779 - val_mae: 9.0648\n",
+      "Epoch 48/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 16ms/step - loss: 274.4807 - mae: 10.8623 - val_loss: 436.2404 - val_mae: 16.8683\n",
+      "Epoch 49/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 17ms/step - loss: 168.4749 - mae: 9.2163 - val_loss: 308.3648 - val_mae: 13.7113\n",
+      "Epoch 50/50\n",
+      "\u001b[1m12/12\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m0s\u001b[0m 18ms/step - loss: 317.3129 - mae: 12.9825 - val_loss: 91.2846 - val_mae: 7.0042\n"
+     ]
+    }
+   ],
+   "source": [
+    "history = model.fit(\n",
+    "    X_train_scaled,\n",
+    "    y_train,\n",
+    "    epochs=50,\n",
+    "    validation_split=0.1,\n",
+    "    verbose=1\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "6dc80789-196b-41c4-81b0-2da79e837d88",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[1m4/4\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m1s\u001b[0m 177ms/step\n",
+      "\n",
+      "🔹 Neural Network Model Evaluation:\n",
+      "MSE: 73.72854614257812\n",
+      "MAE: 5.572371959686279\n"
+     ]
+    }
+   ],
+   "source": [
+    "y_pred_nn = model.predict(X_test_scaled)\n",
+    "\n",
+    "mse_nn, mae_nn = model.evaluate(X_test_scaled, y_test, verbose=0)\n",
+    "\n",
+    "print(\"\\n🔹 Neural Network Model Evaluation:\")\n",
+    "print(\"MSE:\", mse_nn)\n",
+    "print(\"MAE:\", mae_nn)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "30fbfbbe-da6d-4d25-ab2a-39c830a30d99",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[1m1/1\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m1s\u001b[0m 758ms/step\n",
+      "\n",
+      "🔹 Predicted House Price: 41.277435\n"
+     ]
+    }
+   ],
+   "source": [
+    "new_data = pd.DataFrame(\n",
+    "    [[0.1, 6.5, 15.0]],   # realistic values\n",
+    "    columns=['LSTAT', 'RM', 'PTRATIO']\n",
+    ")\n",
+    "\n",
+    "new_data_scaled = scaler.transform(new_data)\n",
+    "\n",
+    "prediction = model.predict(new_data_scaled)\n",
+    "\n",
+    "print(\"\\n🔹 Predicted House Price:\", prediction[0][0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0b252d1a-c50a-4a94-869d-b9a63b97f083",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
